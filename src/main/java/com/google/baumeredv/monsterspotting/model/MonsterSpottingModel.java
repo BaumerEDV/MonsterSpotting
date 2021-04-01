@@ -1,10 +1,12 @@
 package com.google.baumeredv.monsterspotting.model;
 
 import com.google.baumeredv.monsterspotting.model.entity.Encounter;
+import com.google.baumeredv.monsterspotting.model.entity.EncounterInCampaign;
 import com.google.baumeredv.monsterspotting.model.entity.Lighting;
 import com.google.baumeredv.monsterspotting.model.entity.Monster;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateEncounterException;
+import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateEncounterInCampaignException;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateLightingException;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateMonsterException;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateSourceException;
@@ -169,19 +171,38 @@ public class MonsterSpottingModel {
     if (encounter == null) {
       throw new IllegalArgumentException("Encounter to be deleted must not be null");
     }
-    if (gateway.containsEncounter(encounter) == false){
+    if (gateway.containsEncounter(encounter) == false) {
       throw new ThereIsNoSuchEncounterException();
     }
     gateway.deleteEncounter(encounter);
   }
 
   public void deleteMonster(Monster monster) throws ThereIsNoSuchMonsterException {
-    if(monster == null){
+    if (monster == null) {
       throw new IllegalArgumentException("Monster to be deleted must not be null");
     }
-    if(gateway.containsMonster(monster) == false){
+    if (gateway.containsMonster(monster) == false) {
       throw new ThereIsNoSuchMonsterException();
     }
     gateway.deleteMonster(monster);
+  }
+
+  public EncounterInCampaign addEncounterInCampaign(EncounterInCampaign encounterInCampaign)
+      throws ThereIsNoSuchEncounterException, DuplicateEncounterInCampaignException {
+    if (encounterInCampaign == null) {
+      throw new IllegalArgumentException("Encounter in Campaign must not be null");
+    }
+    if (gateway.containsEncounter(encounterInCampaign.encounter()) == false) {
+      throw new ThereIsNoSuchEncounterException();
+    }
+    if (gateway.containsEncounterAtLevel(encounterInCampaign.encounter(),
+        encounterInCampaign.partyLevel())) {
+      throw new DuplicateEncounterInCampaignException();
+    }
+    return gateway.addEncounterInCampaign(encounterInCampaign);
+  }
+
+  public Iterable<EncounterInCampaign> allEncounterInCampaigns() {
+    return gateway.allEncounterInCampaigns();
   }
 }

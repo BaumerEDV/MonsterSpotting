@@ -1,6 +1,7 @@
 package com.google.baumeredv.monsterspotting.model;
 
 import com.google.baumeredv.monsterspotting.model.entity.Encounter;
+import com.google.baumeredv.monsterspotting.model.entity.EncounterInCampaign;
 import com.google.baumeredv.monsterspotting.model.entity.Lighting;
 import com.google.baumeredv.monsterspotting.model.entity.Monster;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
@@ -40,4 +41,10 @@ public interface MonsterSpottingGateway {
   void deleteEncounter(Encounter encounter);
 
   void deleteMonster(Monster monster);
+
+  Iterable<EncounterInCampaign> allEncounterInCampaigns();
+
+  EncounterInCampaign addEncounterInCampaign(EncounterInCampaign encounterInCampaign);
+
+  boolean containsEncounterAtLevel(Encounter encounter, int partyLevel);
 }

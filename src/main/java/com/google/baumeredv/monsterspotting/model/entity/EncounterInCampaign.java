@@ -13,16 +13,26 @@ public final class EncounterInCampaign {
     _partyLevel = partyLevel;
   }
 
+  public Encounter encounter(){
+    return _encounter;
+  }
 
+  public float evToHappenAtThisLevel(){
+    return _evToHappenAtThisLevel;
+  }
 
-  public boolean equals(Object object){
-    if(this == object){
+  public int partyLevel(){
+    return _partyLevel;
+  }
+
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if(object == null){
+    if (object == null) {
       return false;
     }
-    if(!(object instanceof EncounterInCampaign)){
+    if (!(object instanceof EncounterInCampaign)) {
       return false;
     }
     EncounterInCampaign other = (EncounterInCampaign) object;
