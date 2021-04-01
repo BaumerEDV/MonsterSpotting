@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.baumeredv.monsterspotting.App;
+import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateSourceException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchSourceException;
 import com.google.baumeredv.monsterspotting.model.MonsterSpottingModel;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
@@ -33,14 +34,15 @@ public class SourcesTest {
   @Nested
   class WhenAddingSources{
 
+    private final String SOURCE_NAME = "a new source";
+
     @Nested
     class AnAddedSource{
 
-      private final String SOURCE_NAME = "a new source";
       private Source addedSource;
 
       @BeforeEach
-      public void createSource(){
+      public void createSource() throws DuplicateSourceException {
         addedSource = model.addSource(new Source(SOURCE_NAME));
       }
 
@@ -55,7 +57,7 @@ public class SourcesTest {
       }
 
       @Test
-      public void canBeAddedAlongsideASecondOne(){
+      public void canBeAddedAlongsideASecondOne() throws DuplicateSourceException {
         final String SECOND_SOURCE_NAME = SOURCE_NAME + " 2";
         Source secondSource = model.addSource(new Source(SECOND_SOURCE_NAME));
 
@@ -76,6 +78,12 @@ public class SourcesTest {
       @Test
       public void ifItIsNull(){
         assertThrows(IllegalArgumentException.class, () -> model.addSource(null));
+      }
+
+      @Test
+      public void ifItIsIdenticalToAnExistingSource() throws DuplicateSourceException {
+        Source source = model.addSource(new Source(SOURCE_NAME));
+        assertThrows(DuplicateSourceException.class, () -> model.addSource(source));
       }
     }
   }
@@ -103,7 +111,7 @@ public class SourcesTest {
       private Source source;
 
       @BeforeEach
-      public void createSource(){
+      public void createSource() throws DuplicateSourceException {
         source = model.addSource(new Source(SOURCE_TO_BE_DELETED_NAME));
       }
 
