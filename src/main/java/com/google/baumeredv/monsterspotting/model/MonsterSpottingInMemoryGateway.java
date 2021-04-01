@@ -128,4 +128,9 @@ public class MonsterSpottingInMemoryGateway implements MonsterSpottingGateway{
   public void deleteEncounter(Encounter encounter) {
     encounters.remove(encounter);
   }
+
+  @Override
+  public void deleteMonster(Monster monster) {
+    monsters.remove(monster);
+  }
 }

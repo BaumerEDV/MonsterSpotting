@@ -10,6 +10,7 @@ import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateMonsterExc
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateSourceException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchEncounterException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchLightingException;
+import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchMonsterException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchSourceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -172,5 +173,15 @@ public class MonsterSpottingModel {
       throw new ThereIsNoSuchEncounterException();
     }
     gateway.deleteEncounter(encounter);
+  }
+
+  public void deleteMonster(Monster monster) throws ThereIsNoSuchMonsterException {
+    if(monster == null){
+      throw new IllegalArgumentException("Monster to be deleted must not be null");
+    }
+    if(gateway.containsMonster(monster) == false){
+      throw new ThereIsNoSuchMonsterException();
+    }
+    gateway.deleteMonster(monster);
   }
 }

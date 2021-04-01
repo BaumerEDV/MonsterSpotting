@@ -38,4 +38,6 @@ public interface MonsterSpottingGateway {
   boolean containsEncounter(Encounter encounterInQuestion);
 
   void deleteEncounter(Encounter encounter);
+
+  void deleteMonster(Monster monster);
 }

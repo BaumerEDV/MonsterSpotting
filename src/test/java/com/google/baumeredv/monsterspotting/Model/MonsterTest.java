@@ -10,6 +10,8 @@ import com.google.baumeredv.monsterspotting.model.MonsterSpottingModel;
 import com.google.baumeredv.monsterspotting.model.entity.Monster;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateMonsterException;
+import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchMonsterException;
+import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -125,6 +127,42 @@ public class MonsterTest {
 
 
     }
+  }
+
+  @Nested
+  class WhenDeletingMonsters {
+    final String MONSTER_NAME = "Goblin";
+    final Source SOURCE = new Source("Basic Rules");
+    final int SOURCE_PAGE = 138;
+
+    @Test
+    public void deletingNullThrows(){
+      assertThrows(IllegalArgumentException.class,
+          () -> model.deleteMonster(null));
+    }
+
+    @Test
+    public void deletingANonexistentMonsterThrows(){
+      assertThrows(ThereIsNoSuchMonsterException.class,
+          () -> model.deleteMonster(new Monster(MONSTER_NAME, SOURCE, SOURCE_PAGE)));
+    }
+
+    @Nested
+    class AfterAMonsterWasAdded {
+      private Monster monster;
+
+      @BeforeEach
+      public void createMonster() throws DuplicateMonsterException {
+        monster = model.addMonster(new Monster(MONSTER_NAME, SOURCE, SOURCE_PAGE));
+      }
+
+      @Test
+      public void deletingTheMonsterRemovesItFromTheModel() throws ThereIsNoSuchMonsterException {
+        model.deleteMonster(monster);
+        assertFalse(isMonsterInModel(monster));
+      }
+    }
+
   }
 
 
