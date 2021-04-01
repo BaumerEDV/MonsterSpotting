@@ -1,6 +1,7 @@
 package com.google.baumeredv.monsterspotting.Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -78,7 +79,55 @@ public class SourcesTest {
     }
   }
 
+  @Nested
+  class SourceEquals{
+    final String SOURCE_NAME = "source name";
+    Source source;
 
+    @BeforeEach
+    public void createSource(){
+      source = new Source(SOURCE_NAME);
+    }
+
+    @Nested
+    class SourceDoesNotEqual{
+
+      @Test
+      public void somethingThatIsNotASource(){
+        assertFalse(source.equals(1));
+        assertFalse(source.equals("something"));
+        assertFalse(source.equals(SOURCE_NAME));
+      }
+
+      @Test
+      public void sometehingThatIsNull(){
+        assertFalse(source.equals(null));
+      }
+
+      @Test
+      public void aDifferentSource(){
+        Source otherSource = new Source(SOURCE_NAME + " 2");
+        assertFalse(source.equals(otherSource));
+        assertFalse(otherSource.equals(source));
+      }
+    }
+
+    @Nested
+    class SourceDoesEqual{
+
+      @Test
+      public void itself(){
+        assertTrue(source.equals(source));
+      }
+
+      @Test
+      public void anIdenticalCopyOfItself(){
+        Source identicalCopy = new Source(SOURCE_NAME);
+        assertTrue(source.equals(identicalCopy));
+        assertTrue(identicalCopy.equals(source));
+      }
+    }
+  }
 
 
   private boolean isSourceInModel(Source sourceInQuestion) {
