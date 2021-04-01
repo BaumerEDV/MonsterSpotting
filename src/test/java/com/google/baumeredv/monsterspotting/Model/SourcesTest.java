@@ -26,18 +26,18 @@ public class SourcesTest {
   private MonsterSpottingModel model;
 
   @BeforeEach
-  public void createModel(){
+  public void createModel() {
     ApplicationContext context = new AnnotationConfigApplicationContext(App.class);
     this.model = context.getBean(MonsterSpottingModel.class);
   }
 
   @Nested
-  class WhenAddingSources{
+  class WhenAddingSources {
 
     private final String SOURCE_NAME = "a new source";
 
     @Nested
-    class AnAddedSource{
+    class AnAddedSource {
 
       private Source addedSource;
 
@@ -47,12 +47,12 @@ public class SourcesTest {
       }
 
       @Test
-      public void isAddedToTheModel(){
+      public void isAddedToTheModel() {
         assertTrue(isSourceInModel(addedSource));
       }
 
       @Test
-      public void hasTheNameItWasGiven(){
+      public void hasTheNameItWasGiven() {
         assertEquals(SOURCE_NAME, addedSource.name());
       }
 
@@ -67,16 +67,16 @@ public class SourcesTest {
     }
 
     @Nested
-    class ASourceCannotBeAdded{
+    class ASourceCannotBeAdded {
 
       @Test
-      public void ifItsNameIsEmpty(){
+      public void ifItsNameIsEmpty() {
         assertThrows(IllegalArgumentException.class, () -> model.addSource(new Source("")));
         assertThrows(IllegalArgumentException.class, () -> model.addSource(new Source(null)));
       }
 
       @Test
-      public void ifItIsNull(){
+      public void ifItIsNull() {
         assertThrows(IllegalArgumentException.class, () -> model.addSource(null));
       }
 
@@ -89,24 +89,24 @@ public class SourcesTest {
   }
 
   @Nested
-  class WhenDeletingSources{
+  class WhenDeletingSources {
 
     private final String SOURCE_TO_BE_DELETED_NAME = "source to be deleted";
 
     @Test
-    public void deletingNullThrows(){
+    public void deletingNullThrows() {
       assertThrows(IllegalArgumentException.class,
           () -> model.deleteSource(null));
     }
 
     @Test
-    public void deletingANonexistentSourceThrows(){
+    public void deletingANonexistentSourceThrows() {
       assertThrows(ThereIsNoSuchSourceException.class,
           () -> model.deleteSource(new Source(SOURCE_TO_BE_DELETED_NAME)));
     }
 
     @Nested
-    class AfterASourceWasAdded{
+    class AfterASourceWasAdded {
 
       private Source source;
 
@@ -127,32 +127,33 @@ public class SourcesTest {
 
 
   @Nested
-  class SourceEquals{
+  class SourceEquals {
+
     final String SOURCE_NAME = "source name";
     Source source;
 
     @BeforeEach
-    public void createSource(){
+    public void createSource() {
       source = new Source(SOURCE_NAME);
     }
 
     @Nested
-    class SourceDoesNotEqual{
+    class SourceDoesNotEqual {
 
       @Test
-      public void somethingThatIsNotASource(){
+      public void somethingThatIsNotASource() {
         assertFalse(source.equals(1));
         assertFalse(source.equals("something"));
         assertFalse(source.equals(SOURCE_NAME));
       }
 
       @Test
-      public void sometehingThatIsNull(){
+      public void somethingThatIsNull() {
         assertFalse(source.equals(null));
       }
 
       @Test
-      public void aDifferentSource(){
+      public void aDifferentSource() {
         Source otherSource = new Source(SOURCE_NAME + " 2");
         assertFalse(source.equals(otherSource));
         assertFalse(otherSource.equals(source));
@@ -160,15 +161,15 @@ public class SourcesTest {
     }
 
     @Nested
-    class SourceDoesEqual{
+    class SourceDoesEqual {
 
       @Test
-      public void itself(){
+      public void itself() {
         assertTrue(source.equals(source));
       }
 
       @Test
-      public void anIdenticalCopyOfItself(){
+      public void anIdenticalCopyOfItself() {
         Source identicalCopy = new Source(SOURCE_NAME);
         assertTrue(source.equals(identicalCopy));
         assertTrue(identicalCopy.equals(source));
@@ -179,8 +180,8 @@ public class SourcesTest {
 
   private boolean isSourceInModel(Source sourceInQuestion) {
     Iterable<Source> allSources = model.allSources();
-    for(Source source : allSources){
-      if(source.equals(sourceInQuestion)){
+    for (Source source : allSources) {
+      if (source.equals(sourceInQuestion)) {
         return true;
       }
     }

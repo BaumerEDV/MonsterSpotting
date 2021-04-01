@@ -1,5 +1,6 @@
 package com.google.baumeredv.monsterspotting.model;
 
+import com.google.baumeredv.monsterspotting.model.entity.Encounter;
 import com.google.baumeredv.monsterspotting.model.entity.Lighting;
 import com.google.baumeredv.monsterspotting.model.entity.Monster;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
@@ -12,11 +13,13 @@ public class MonsterSpottingInMemoryGateway implements MonsterSpottingGateway{
   private ArrayList<Source> sources;
   private ArrayList<Lighting> lightings;
   private ArrayList<Monster> monsters;
+  private ArrayList<Encounter> encounters;
 
   public MonsterSpottingInMemoryGateway(){
     sources = new ArrayList<>();
     lightings = new ArrayList<>();
     monsters = new ArrayList<>();
+    encounters = new ArrayList<>();
   }
 
   @Override
@@ -96,5 +99,33 @@ public class MonsterSpottingInMemoryGateway implements MonsterSpottingGateway{
       }
     }
     return false;
+  }
+
+  @Override
+  public Iterable<Encounter> allEncounters() {
+    ArrayList<Encounter> result = new ArrayList<>();
+    result.addAll(encounters);
+    return result;
+  }
+
+  @Override
+  public Encounter addEncounter(Encounter encounter) {
+    encounters.add(encounter);
+    return encounter;
+  }
+
+  @Override
+  public boolean containsEncounter(Encounter encounterInQuestion) {
+    for(Encounter encounter : encounters){
+      if(encounter.equals(encounterInQuestion)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public void deleteEncounter(Encounter encounter) {
+    encounters.remove(encounter);
   }
 }
