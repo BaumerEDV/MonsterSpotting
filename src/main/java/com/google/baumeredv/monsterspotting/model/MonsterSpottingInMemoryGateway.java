@@ -25,4 +25,19 @@ public class MonsterSpottingInMemoryGateway implements MonsterSpottingGateway{
     sources.add(source);
     return source;
   }
+
+  @Override
+  public void deleteSource(Source source) {
+    sources.remove(source);
+  }
+
+  @Override
+  public boolean containsSource(Source sourceInQuestion) {
+    for (Source source : sources){
+      if (source.equals(sourceInQuestion)){
+        return true;
+      }
+    }
+    return false;
+  }
 }

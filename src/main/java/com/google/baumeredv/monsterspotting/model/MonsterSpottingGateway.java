@@ -9,4 +9,8 @@ public interface MonsterSpottingGateway {
   Iterable<Source> allSources();
 
   Source addSource(Source source);
+
+  void deleteSource(Source source);
+
+  boolean containsSource(Source source);
 }

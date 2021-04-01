@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.baumeredv.monsterspotting.App;
+import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchSourceException;
 import com.google.baumeredv.monsterspotting.model.MonsterSpottingModel;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,6 +79,44 @@ public class SourcesTest {
       }
     }
   }
+
+  @Nested
+  class WhenDeletingSources{
+
+    private final String SOURCE_TO_BE_DELETED_NAME = "source to be deleted";
+
+    @Test
+    public void deletingNullThrows(){
+      assertThrows(IllegalArgumentException.class,
+          () -> model.deleteSource(null));
+    }
+
+    @Test
+    public void deletingANonexistentSourceThrows(){
+      assertThrows(ThereIsNoSuchSourceException.class,
+          () -> model.deleteSource(new Source(SOURCE_TO_BE_DELETED_NAME)));
+    }
+
+    @Nested
+    class AfterASourceWasAdded{
+
+      private Source source;
+
+      @BeforeEach
+      public void createSource(){
+        source = model.addSource(new Source(SOURCE_TO_BE_DELETED_NAME));
+      }
+
+      @Test
+      public void deletingTheSourceRemovesItFromTheModel() throws ThereIsNoSuchSourceException {
+        model.deleteSource(new Source(SOURCE_TO_BE_DELETED_NAME));
+        assertFalse(isSourceInModel(source));
+      }
+    }
+
+
+  }
+
 
   @Nested
   class SourceEquals{

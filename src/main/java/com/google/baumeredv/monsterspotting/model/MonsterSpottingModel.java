@@ -1,6 +1,7 @@
 package com.google.baumeredv.monsterspotting.model;
 
 import com.google.baumeredv.monsterspotting.model.entity.Source;
+import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchSourceException;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,5 +31,15 @@ public class MonsterSpottingModel {
 
   public Iterable<Source> AllSources() {
     return gateway.allSources();
+  }
+
+  public void deleteSource(Source source) throws ThereIsNoSuchSourceException {
+    if(source == null){
+      throw new IllegalArgumentException("Cannot delete a source that is null");
+    }
+    if(gateway.containsSource(source) == false){
+      throw new ThereIsNoSuchSourceException();
+    }
+    gateway.deleteSource(source);
   }
 }
