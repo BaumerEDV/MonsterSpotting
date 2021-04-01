@@ -1,12 +1,15 @@
 package com.google.baumeredv.monsterspotting.model;
 
 import com.google.baumeredv.monsterspotting.model.entity.Lighting;
+import com.google.baumeredv.monsterspotting.model.entity.Monster;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateLightingException;
+import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateMonsterException;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateSourceException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchLightingException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchSourceException;
 import java.util.ArrayList;
+import net.bytebuddy.pool.TypePool.Resolution.Illegal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -75,5 +78,31 @@ public class MonsterSpottingModel {
       throw new ThereIsNoSuchLightingException();
     }
     gateway.deleteLighting(lighting);
+  }
+
+  public Monster addMonster(Monster monster) throws DuplicateMonsterException {
+    if (monster == null){
+      throw new IllegalArgumentException("Added monster must not be null");
+    }
+    if (monster.source() == null){
+      throw new IllegalArgumentException("Added monster source must not be null");
+    }
+    if (monster.name() == null || monster.name().equals("")){
+      throw new IllegalArgumentException("Monster name must not be empty");
+    }
+    if(monster.source().name() == null || monster.source().name().equals("")){
+      throw new IllegalArgumentException("Monster source name must not be empty");
+    }
+    if(monster.sourcePage() <= 0){
+      throw new IllegalArgumentException("Monster source page must not be zero or negative");
+    }
+    if(gateway.containsMonster(monster)){
+      throw new DuplicateMonsterException();
+    }
+    return gateway.addMonster(monster);
+  }
+
+  public Iterable<Monster> allMonsters() {
+    return gateway.allMonsters();
   }
 }

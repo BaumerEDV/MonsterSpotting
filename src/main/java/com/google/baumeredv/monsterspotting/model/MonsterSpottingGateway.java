@@ -1,6 +1,7 @@
 package com.google.baumeredv.monsterspotting.model;
 
 import com.google.baumeredv.monsterspotting.model.entity.Lighting;
+import com.google.baumeredv.monsterspotting.model.entity.Monster;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
 import org.springframework.stereotype.Component;
 
@@ -22,4 +23,10 @@ public interface MonsterSpottingGateway {
   boolean containsLighting(Lighting lightingInQuestion);
 
   void deleteLighting(Lighting lighting);
+
+  Monster addMonster(Monster monster);
+
+  Iterable<Monster> allMonsters();
+
+  boolean containsMonster(Monster monsterInQuestion);
 }

@@ -1,6 +1,7 @@
 package com.google.baumeredv.monsterspotting.model;
 
 import com.google.baumeredv.monsterspotting.model.entity.Lighting;
+import com.google.baumeredv.monsterspotting.model.entity.Monster;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
 import java.util.ArrayList;
 import org.springframework.stereotype.Component;
@@ -10,10 +11,12 @@ public class MonsterSpottingInMemoryGateway implements MonsterSpottingGateway{
 
   private ArrayList<Source> sources;
   private ArrayList<Lighting> lightings;
+  private ArrayList<Monster> monsters;
 
   public MonsterSpottingInMemoryGateway(){
     sources = new ArrayList<>();
     lightings = new ArrayList<>();
+    monsters = new ArrayList<>();
   }
 
   @Override
@@ -70,5 +73,28 @@ public class MonsterSpottingInMemoryGateway implements MonsterSpottingGateway{
   @Override
   public void deleteLighting(Lighting lighting) {
     lightings.remove(lighting);
+  }
+
+  @Override
+  public Monster addMonster(Monster monster) {
+    monsters.add(monster);
+    return monster;
+  }
+
+  @Override
+  public Iterable<Monster> allMonsters() {
+    ArrayList<Monster> result = new ArrayList<>();
+    result.addAll(monsters);
+    return result;
+  }
+
+  @Override
+  public boolean containsMonster(Monster monsterInQuestion) {
+    for (Monster monster : monsters){
+      if(monster.equals(monsterInQuestion)){
+        return true;
+      }
+    }
+    return false;
   }
 }
