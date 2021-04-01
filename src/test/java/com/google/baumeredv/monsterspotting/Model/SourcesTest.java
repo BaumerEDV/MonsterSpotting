@@ -178,7 +178,7 @@ public class SourcesTest {
 
 
   private boolean isSourceInModel(Source sourceInQuestion) {
-    Iterable<Source> allSources = model.AllSources();
+    Iterable<Source> allSources = model.allSources();
     for(Source source : allSources){
       if(source.equals(sourceInQuestion)){
         return true;

@@ -1,7 +1,10 @@
 package com.google.baumeredv.monsterspotting.model;
 
+import com.google.baumeredv.monsterspotting.model.entity.Lighting;
 import com.google.baumeredv.monsterspotting.model.entity.Source;
+import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateLightingException;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateSourceException;
+import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchLightingException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchSourceException;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +36,7 @@ public class MonsterSpottingModel {
     return gateway.addSource(source);
   }
 
-  public Iterable<Source> AllSources() {
+  public Iterable<Source> allSources() {
     return gateway.allSources();
   }
 
@@ -45,5 +48,32 @@ public class MonsterSpottingModel {
       throw new ThereIsNoSuchSourceException();
     }
     gateway.deleteSource(source);
+  }
+
+  public Lighting addLighting(Lighting lighting) throws DuplicateLightingException {
+    if(lighting == null){
+      throw new IllegalArgumentException("Lighting must not be null");
+    }
+    if(lighting.description() == null || lighting.description().equals("")){
+      throw new IllegalArgumentException("lighting description cannot be empty");
+    }
+    if(gateway.containsLighting(lighting)){
+      throw new DuplicateLightingException();
+    }
+    return gateway.addLighting(lighting);
+  }
+
+  public Iterable<Lighting> allLightings() {
+    return gateway.allLightings();
+  }
+
+  public void deleteLighting(Lighting lighting) throws ThereIsNoSuchLightingException {
+    if(lighting == null){
+      throw new IllegalArgumentException("Lighting must not be null");
+    }
+    if(gateway.containsLighting(lighting) == false){
+      throw new ThereIsNoSuchLightingException();
+    }
+    gateway.deleteLighting(lighting);
   }
 }
