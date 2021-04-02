@@ -11,6 +11,7 @@ import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateLightingEx
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateMonsterException;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateSourceException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchEncounterException;
+import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchEncounterInCampaignException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchLightingException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchMonsterException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchSourceException;
@@ -204,5 +205,16 @@ public class MonsterSpottingModel {
 
   public Iterable<EncounterInCampaign> allEncounterInCampaigns() {
     return gateway.allEncounterInCampaigns();
+  }
+
+  public void deleteEncounterInCampaign(EncounterInCampaign encounterInCampaign)
+      throws ThereIsNoSuchEncounterInCampaignException {
+    if(encounterInCampaign == null){
+      throw new IllegalArgumentException("Encounter in Campaign to be deleted must not be null");
+    }
+    if(gateway.containsEncounterInCampaign(encounterInCampaign) == false){
+      throw new ThereIsNoSuchEncounterInCampaignException();
+    }
+    gateway.deleteEncounterInCampaign(encounterInCampaign);
   }
 }

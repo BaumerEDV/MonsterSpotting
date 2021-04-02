@@ -47,4 +47,8 @@ public interface MonsterSpottingGateway {
   EncounterInCampaign addEncounterInCampaign(EncounterInCampaign encounterInCampaign);
 
   boolean containsEncounterAtLevel(Encounter encounter, int partyLevel);
+
+  boolean containsEncounterInCampaign(EncounterInCampaign encounterInCampaign);
+
+  void deleteEncounterInCampaign(EncounterInCampaign encounterInCampaign);
 }

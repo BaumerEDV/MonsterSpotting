@@ -14,10 +14,10 @@ import com.google.baumeredv.monsterspotting.model.entity.Source;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateEncounterException;
 import com.google.baumeredv.monsterspotting.model.exceptions.DuplicateEncounterInCampaignException;
 import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchEncounterException;
+import com.google.baumeredv.monsterspotting.model.exceptions.ThereIsNoSuchEncounterInCampaignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
@@ -45,7 +45,7 @@ public class EncounterInCampaignTest {
   final int MIN_ENCOUNTER_START_DISTANCE = -1;
   final int MAX_ENCOUNTER_START_DISTANCE = -1;
   final boolean ENCOUNTER_IS_RESISTANT_TO_GROUND_DEFAULT_KILL = false;
-  final Encounter encounter = new Encounter(SOURCE, SOURCE_PAGE, LIGHTING, PARTY_CAN_SURPRISE,
+  final Encounter ENCOUNTER = new Encounter(SOURCE, SOURCE_PAGE, LIGHTING, PARTY_CAN_SURPRISE,
       NOTES, PARTY_CAN_BE_SURPRISED, ADVENTURE_ENCOURAGES_SURPRISE, MAXIMUM_FLIGHT_HEIGHT,
       ROOM_BOUNDING_BOX_WIDTH, ROOM_BOUNDING_BOX_LENGTH, MIN_ENCOUNTER_START_DISTANCE,
       MAX_ENCOUNTER_START_DISTANCE, ENCOUNTER_IS_RESISTANT_TO_GROUND_DEFAULT_KILL);
@@ -69,9 +69,9 @@ public class EncounterInCampaignTest {
       @BeforeEach
       public void createEncounterInCampaign()
           throws DuplicateEncounterException, ThereIsNoSuchEncounterException, DuplicateEncounterInCampaignException {
-        model.addEncounter(encounter);
+        model.addEncounter(ENCOUNTER);
         encounterInCampaign = model.addEncounterInCampaign(
-            new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL));
+            new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL));
       }
 
       @Test
@@ -81,7 +81,7 @@ public class EncounterInCampaignTest {
 
       @Test
       public void hasTheDataItWasGiven() {
-        assertEquals(encounter, encounterInCampaign.encounter());
+        assertEquals(ENCOUNTER, encounterInCampaign.encounter());
         assertEquals(EV_TO_HAPPEN_AT_THIS_LEVEL, encounterInCampaign.evToHappenAtThisLevel());
         assertEquals(PARTY_LEVEL, encounterInCampaign.partyLevel());
       }
@@ -90,7 +90,7 @@ public class EncounterInCampaignTest {
       public void canBeAddedAlongsideASecondOne()
           throws ThereIsNoSuchEncounterException, DuplicateEncounterInCampaignException {
         EncounterInCampaign secondEncounterInCampaign = model.addEncounterInCampaign(
-            new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL + 2));
+            new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL + 2));
         assertTrue(isEncounterInCampaignInModel(encounterInCampaign));
         assertTrue(isEncounterInCampaignInModel(secondEncounterInCampaign));
       }
@@ -103,7 +103,7 @@ public class EncounterInCampaignTest {
       public void ifItsEncounterIsNotInTheModel() {
         assertThrows(ThereIsNoSuchEncounterException.class,
             () -> model.addEncounterInCampaign(
-                new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL)));
+                new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL)));
       }
 
       @Test
@@ -115,12 +115,51 @@ public class EncounterInCampaignTest {
       @Test
       public void ifThatEncounterAlreadyExistsAtThatLevel()
           throws DuplicateEncounterException, ThereIsNoSuchEncounterException, DuplicateEncounterInCampaignException {
-        model.addEncounter(encounter);
+        model.addEncounter(ENCOUNTER);
         model.addEncounterInCampaign(
-            new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL));
+            new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL));
         assertThrows(DuplicateEncounterInCampaignException.class,
             () -> model.addEncounterInCampaign(
-                new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL+1, PARTY_LEVEL)));
+                new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL + 1, PARTY_LEVEL)));
+      }
+    }
+  }
+
+  @Nested
+  class WhenDeletingEncounterInCampaigns {
+
+    @Test
+    public void deletingNullThrows() {
+      assertThrows(IllegalArgumentException.class,
+          () -> model.deleteEncounterInCampaign(null));
+    }
+
+    @Test
+    public void deletingANonexistentEncounterInCampaignThrows() {
+      assertThrows(ThereIsNoSuchEncounterInCampaignException.class,
+          () -> model.deleteEncounterInCampaign(
+              new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL)
+          ));
+    }
+
+    @Nested
+    class AfternAnEncounterInCampaignWasAdded {
+      private EncounterInCampaign encounterInCampaign;
+
+      @BeforeEach
+      public void createEncounterInCampaign()
+          throws DuplicateEncounterException, DuplicateEncounterInCampaignException, ThereIsNoSuchEncounterException {
+        Encounter encounter = model.addEncounter(ENCOUNTER);
+        encounterInCampaign = model.addEncounterInCampaign(
+            new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL)
+        );
+      }
+
+      @Test
+      public void deletingTheEncounterInCampaignRemovesItFromTheModel()
+          throws ThereIsNoSuchEncounterInCampaignException {
+        model.deleteEncounterInCampaign(encounterInCampaign);
+        assertFalse(isEncounterInCampaignInModel(encounterInCampaign));
       }
     }
   }
@@ -134,7 +173,7 @@ public class EncounterInCampaignTest {
     @BeforeEach
     public void createEncounterInCampaign() {
       encounterInCampaign =
-          new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL);
+          new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL);
     }
 
     @Nested
@@ -155,7 +194,7 @@ public class EncounterInCampaignTest {
       @Test
       public void aDifferentEncounterInCampaign() {
         EncounterInCampaign otherEncounterInCampaign =
-            new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL + 1);
+            new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL + 1);
         assertFalse(encounterInCampaign.equals(otherEncounterInCampaign));
         assertFalse(otherEncounterInCampaign.equals(encounterInCampaign));
       }
@@ -172,7 +211,7 @@ public class EncounterInCampaignTest {
       @Test
       public void anIdenticalCopyOfItself() {
         EncounterInCampaign identicalCopy =
-            new EncounterInCampaign(encounter, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL);
+            new EncounterInCampaign(ENCOUNTER, EV_TO_HAPPEN_AT_THIS_LEVEL, PARTY_LEVEL);
         assertTrue(identicalCopy.equals(encounterInCampaign));
         assertTrue(encounterInCampaign.equals(identicalCopy));
       }

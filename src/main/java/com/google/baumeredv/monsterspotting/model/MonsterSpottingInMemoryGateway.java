@@ -158,4 +158,14 @@ public class MonsterSpottingInMemoryGateway implements MonsterSpottingGateway {
     }
     return false;
   }
+
+  @Override
+  public boolean containsEncounterInCampaign(EncounterInCampaign encounterInCampaign) {
+    return encounterInCampaigns.contains(encounterInCampaign);
+  }
+
+  @Override
+  public void deleteEncounterInCampaign(EncounterInCampaign encounterInCampaign) {
+    encounterInCampaigns.remove(encounterInCampaign);
+  }
 }
